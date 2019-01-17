@@ -11,7 +11,7 @@ class BooksApp extends React.Component {
     booksWanttoRead: [],
     booksRead: [],
     books: [],
-    cat: ["Currently Reading", "Want to Read", "Read"],
+    cat: ["currentlyReading", "wantToRead", "read"],
     showSearchPage: false
   }
   componentDidMount() {
@@ -34,80 +34,71 @@ class BooksApp extends React.Component {
           }))
       })
   }
-  selectChange = (catSelect, book) => {
-    console.log(catSelect)
-    console.log(book.title)
-    this.moveBook(catSelect, book)
-  };
+  moveBook = (targetCat, book) => {
 
-  //----------------------------------------
-// Add/Move a book to the READING array
-//----------------------------------------
-moveBook = (catSelected, book) => {
-
-  // Add/Move a book to the appropriate array
-  if (catSelected === 'currentlyReading') {
-      let arr = this.state.booksReading.filter((item) => {
-      return item.id === book.id
-    })
-    if (arr.length === 0) {
-        this.setState(prevState => ({
-        booksReading: [...prevState.booksReading, book] }));
-    }
-  }
-  if (catSelected === 'wantToRead') {
-     let arr = this.state.booksWanttoRead.filter((item) => {
-     return item.id === book.id
-    })
-    if (arr.length === 0) {
-        this.setState(prevState => ({
-        booksWanttoRead: [...prevState.booksWanttoRead, book] }));
-    }
-  }
-  if (catSelected === 'read') {
-      let arr = this.state.booksRead.filter((item) => {
-      return item.id === book.id
-    })
-    if (arr.length === 0) {
-        this.setState(prevState => ({
-        booksRead: [...prevState.booksRead, book] }));
-    }
-  }
-  // Remove book from the appropriate array
-  if (catSelected !== 'currentlyReading') {
-      let arr = this.state.booksReading.filter((item) => {
-      return item.id === book.id
-    })
-    if (arr.length > 0) {
-        let newArr = this.state.booksReading.filter((item) => {
-        return item.id !== book.id
+    // Move the book to the taget category array
+    if (targetCat === 'currentlyReading') {
+        let arr = this.state.booksReading.filter((item) => {
+        return item.id === book.id
       })
-      this.setState({ booksReading: newArr }); 
+      if (arr.length === 0) {
+          this.setState(prevState => ({
+          booksReading: [...prevState.booksReading, book] }));
+      }
     }
-  }
-  if (catSelected !== 'wantToRead') {
+    if (targetCat === 'wantToRead') {
       let arr = this.state.booksWanttoRead.filter((item) => {
       return item.id === book.id
-    })
-    if (arr.length > 0) {
+      })
+      if (arr.length === 0) {
+          this.setState(prevState => ({
+          booksWanttoRead: [...prevState.booksWanttoRead, book] }));
+      }
+    }
+    if (targetCat === 'read') {
+        let arr = this.state.booksRead.filter((item) => {
+        return item.id === book.id
+      })
+      if (arr.length === 0) {
+          this.setState(prevState => ({
+          booksRead: [...prevState.booksRead, book] }));
+      }
+    }
+    // If not the target category array then remove the book
+    if (targetCat !== 'currentlyReading') {
+        let arr = this.state.booksReading.filter((item) => {
+            return item.id === book.id
+        })
+        if (arr.length > 0) {
+          let newArr = this.state.booksReading.filter((item) => {
+          return item.id !== book.id
+        })
+        this.setState({ booksReading: newArr }); 
+      }
+    }
+    if (targetCat !== 'wantToRead') {
+        let arr = this.state.booksWanttoRead.filter((item) => {
+        return item.id === book.id
+      })
+      if (arr.length > 0) {
         let newArr = this.state.booksWanttoRead.filter((item) => {
+            return item.id !== book.id
+        })
+        this.setState({ booksWanttoRead: newArr }); 
+      }
+    }
+    if (targetCat !== 'read') {
+        let arr = this.state.booksRead.filter((item) => {
+        return item.id === book.id
+      })
+      if (arr.length > 0) {
+        let newArr = this.state.booksRead.filter((item) => {
         return item.id !== book.id
-     })
-     this.setState({ booksWanttoRead: newArr }); 
+      })
+      this.setState({ booksRead: newArr }); 
     }
   }
-  if (catSelected !== 'read') {
-      let arr = this.state.booksRead.filter((item) => {
-      return item.id === book.id
-    })
-    if (arr.length > 0) {
-       let newArr = this.state.booksRead.filter((item) => {
-       return item.id !== book.id
-    })
-    this.setState({ booksRead: newArr }); 
-  }
- }
-};
+  };
   render() {
     return (
       <div className="app">
@@ -115,9 +106,9 @@ moveBook = (catSelected, book) => {
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
-            <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} selectChange={this.selectChange}/>
-            <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} selectChange={this.selectChange}/>
-            <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} selectChange={this.selectChange}/>
+            <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook}/>
+            <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook}/>
+            <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook}/>
           </div>
         )}
         <div className="open-search">
