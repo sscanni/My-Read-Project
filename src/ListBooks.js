@@ -2,16 +2,16 @@ import React from 'react';
 import './App.css';
 
   class ListBooks extends React.Component {
-
+    
     selectChange = (event) => {
       let bookIndex = event.target.name
       let targetCat = event.target.value
       this.props.moveBook(targetCat, this.props.books[bookIndex])
     };
 
-    setSelect = () => {
-      return this.props.cat
-    }
+    // setSelect = () => {
+    //   return this.props.cat
+    // }
 
     render() {
       return (
@@ -29,7 +29,7 @@ import './App.css';
                     <div className="book-top">
                      <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                       <div className="book-shelf-changer">
-                        <select name={index} value={this.setSelect()} onChange={this.selectChange.bind(this)}>
+                        <select name={index} value={this.props.setSelect(book)} onChange={this.selectChange.bind(this)}>
                           <option value="move" disabled>Move to...</option>
                           <option value="currentlyReading">Currently Reading</option>
                           <option value="wantToRead">Want to Read</option>
@@ -39,9 +39,7 @@ import './App.css';
                       </div>
                     </div>
                     <div className="book-title">{book.title}</div>
-                    {book.authors.map((author) => 
-                      <div className="book-authors">{author}</div>
-                    )}
+                    {(("authors" in book) ? book.authors.map((author) => <div key={author} className="book-authors">{author}</div>) : "")}
                   </div>
               </li>)}
               </ol>

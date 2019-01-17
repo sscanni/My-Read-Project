@@ -21,7 +21,7 @@ class BooksApp extends React.Component {
             booksReading
           }))
       })
-      BooksAPI.search("React")
+      BooksAPI.search("poetry")
       .then((booksWanttoRead) => {
           this.setState(() => ({
             booksWanttoRead
@@ -34,70 +34,65 @@ class BooksApp extends React.Component {
           }))
       })
   }
-  moveBook = (targetCat, book) => {
+      
+  setSelect = (book) => {
+    if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {
+        return "currentlyReading";
+    }
+    if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) > -1) {
+        return "wantToRead";
+    }
+    if (this.state.booksRead.findIndex(item => item.id === book.id) > -1) {
+        return "read";
+    }  
+    return "none";
+  }
 
-    // Move the book to the taget category array
+  moveBook = (targetCat, book) => {
+    // Move the book to the taget bookshelf
     if (targetCat === 'currentlyReading') {
-        let arr = this.state.booksReading.filter((item) => {
-        return item.id === book.id
-      })
-      if (arr.length === 0) {
+      if (this.state.booksReading.findIndex(item => item.id === book.id) === -1) {
           this.setState(prevState => ({
           booksReading: [...prevState.booksReading, book] }));
       }
     }
     if (targetCat === 'wantToRead') {
-      let arr = this.state.booksWanttoRead.filter((item) => {
-      return item.id === book.id
-      })
-      if (arr.length === 0) {
+      if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) === -1) {
           this.setState(prevState => ({
           booksWanttoRead: [...prevState.booksWanttoRead, book] }));
       }
     }
     if (targetCat === 'read') {
-        let arr = this.state.booksRead.filter((item) => {
-        return item.id === book.id
-      })
-      if (arr.length === 0) {
+      if (this.state.booksRead.findIndex(item => item.id === book.id) === -1) {
           this.setState(prevState => ({
           booksRead: [...prevState.booksRead, book] }));
       }
     }
     // If not the target category array then remove the book
     if (targetCat !== 'currentlyReading') {
-        let arr = this.state.booksReading.filter((item) => {
-            return item.id === book.id
-        })
-        if (arr.length > 0) {
+      if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {
           let newArr = this.state.booksReading.filter((item) => {
-          return item.id !== book.id
-        })
-        this.setState({ booksReading: newArr }); 
+              return item.id !== book.id
+          })
+          this.setState({ booksReading: newArr }); 
       }
     }
     if (targetCat !== 'wantToRead') {
-        let arr = this.state.booksWanttoRead.filter((item) => {
-        return item.id === book.id
-      })
-      if (arr.length > 0) {
-        let newArr = this.state.booksWanttoRead.filter((item) => {
-            return item.id !== book.id
-        })
-        this.setState({ booksWanttoRead: newArr }); 
-      }
+        if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) > -1) {
+            let newArr = this.state.booksWanttoRead.filter((item) => {
+                return item.id !== book.id
+            })
+            this.setState({ booksWanttoRead: newArr }); 
+        }      
     }
     if (targetCat !== 'read') {
-        let arr = this.state.booksRead.filter((item) => {
-        return item.id === book.id
-      })
-      if (arr.length > 0) {
+      if (this.state.booksRead.findIndex(item => item.id === book.id) > -1) {
         let newArr = this.state.booksRead.filter((item) => {
-        return item.id !== book.id
-      })
-      this.setState({ booksRead: newArr }); 
+            return item.id !== book.id
+        })
+        this.setState({ booksRead: newArr }); 
+      }
     }
-  }
   };
   render() {
     return (
@@ -106,9 +101,9 @@ class BooksApp extends React.Component {
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
-            <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook}/>
-            <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook}/>
-            <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook}/>
+            <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook} setSelect={this.setSelect}/>
+            <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
+            <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
           </div>
         )}
         <div className="open-search">
