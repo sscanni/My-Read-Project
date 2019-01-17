@@ -2,9 +2,16 @@ import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 import ListBooks from './ListBooks'
-// Reminders:
-// 1) Display multiple authors
-//
+import { Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
+//----------------------------------------------------------------------
+// Changes to still make:
+// 1) Display multiple authors - fixed
+// 2) if book image does not exist then show default image
+// 3) Fix hover + button
+// 4) Save books using api
+// 5) search for books with input field
+//----------------------------------------------------------------------
 class BooksApp extends React.Component {
   state = {
     booksReading: [],
@@ -15,22 +22,29 @@ class BooksApp extends React.Component {
     showSearchPage: false
   }
   componentDidMount() {
-    BooksAPI.search("Web Development")
-      .then((booksReading) => {
+    // BooksAPI.search("Web Development")
+    //   .then((booksReading) => {
+    //       this.setState(() => ({
+    //         booksReading
+    //       }))
+    //   })
+    //   BooksAPI.search("poetry")
+    //   .then((booksWanttoRead) => {
+    //       this.setState(() => ({
+    //         booksWanttoRead
+    //       }))
+    //   })
+    //   BooksAPI.search("Programming")
+    //   .then((booksRead) => {
+    //       this.setState(() => ({
+    //         booksRead
+    //       }))
+    //   })
+      // BooksAPI.getAll()
+      BooksAPI.search("Development")
+      .then((books) => {
           this.setState(() => ({
-            booksReading
-          }))
-      })
-      BooksAPI.search("poetry")
-      .then((booksWanttoRead) => {
-          this.setState(() => ({
-            booksWanttoRead
-          }))
-      })
-      BooksAPI.search("Programming")
-      .then((booksRead) => {
-          this.setState(() => ({
-            booksRead
+            books
           }))
       })
   }
@@ -97,18 +111,44 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
-            <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook} setSelect={this.setSelect}/>
-            <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
-            <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
-          </div>
-        )}
-        <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
-        </div>
+            <Route exact path='/' render={() => (
+              <div className="list-books">
+                  <div className="list-books-title">
+                      <h1>MyReads</h1>
+                  </div>
+                  <div>
+                    <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook} setSelect={this.setSelect}/>
+                    <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
+                    <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
+                    <div className="open-search">
+                      <Link
+                        to='/search'
+                        className="open-search-button"
+                        >Add a book</Link>
+                    </div>
+                  </div>
+                </div>
+            )} />
+            <Route path='/search' render={() => (
+                <div className="search-books">
+                    <div className="search-books-bar">
+                       <div>
+                          <Link
+                            to='/'
+                            className="close-search"
+                            >Close</Link>
+                        </div>
+                       <div className="search-books-input-wrapper">
+                          <input type="text" placeholder="Search by title or author"/>
+                        </div>
+                    </div>
+                    <div className="search-books-results">                       
+                      <div>
+                        <ListBooks cat={"search"} books={this.state.books} moveBook={this.moveBook} setSelect={this.setSelect}/>
+                      </div>
+                    </div>
+                </div>
+            )} />
       </div>
     )
   }

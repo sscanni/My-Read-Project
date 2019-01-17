@@ -19,7 +19,9 @@ import './App.css';
         <div>
           <div className="bookshelf">
             <h2 className="bookshelf-title">
-               {this.props.cat === 'currentlyReading' ? 'Currently Reading ' : (this.props.cat === 'wantToRead' ? 'Want to Read ' : 'Read ')} 
+               {this.props.cat === 'currentlyReading' ? 'Currently Reading ' : 
+               (this.props.cat === 'wantToRead' ? 'Want to Read ' : 
+               (this.props.cat === 'read' ? 'Read ' : ''))} 
                ({this.props.books.length} books)
             </h2>
             <div className="bookshelf-books">
