@@ -11,6 +11,7 @@ import { Route } from 'react-router-dom'
 // - if book image does not exist then show default image
 // - Save books using api
 // - search for books with input field
+// - add propType to components
 //----------------------------------------------------------------------
 class BooksApp extends React.Component {
   state = {
@@ -20,75 +21,78 @@ class BooksApp extends React.Component {
     books: [],
     cat: ["currentlyReading", "wantToRead", "read"],
     bookSearchText: "",
-    tempbooks: []
+
+    testbooks: [],
+    shelfParm: "",
+    testbook: []
   }
   componentDidMount() {
 
-    // BooksAPI.search("Web")
-    //   .then((booksReading) => {
-    //       this.setState(() => ({
-    //         booksReading
-    //       }))
-    //   })
-
-
-
-    // BooksAPI.search("Web Development")
-    //   .then((booksReading) => {
-    //       this.setState(() => ({
-    //         booksReading
-    //       }))
-    //   })
-    //   BooksAPI.search("poetry")
-    //   .then((booksWanttoRead) => {
-    //       this.setState(() => ({
-    //         booksWanttoRead
-    //       }))
-    //   })
-    //   BooksAPI.search("Programming")
-    //   .then((booksRead) => {
-    //       this.setState(() => ({
-    //         booksRead
-    //       }))
-    //   })
-    // BooksAPI.getAll()
-    //   .then((books) => {
-    //       this.setState(() => ({
-    //         books
-    //       }))
-    //   })
+    BooksAPI.getAll()
+      .then((testbooks) => {
+          this.setState(() => ({
+            testbooks
+          }))
+          this.assignBookShelf()
+      })
   }
+
+  assignBookShelf () {
+    let newArr = this.state.testbooks.filter((item) => {
+        return item.shelf === "currentlyReading"
+    })
+
+    this.setState({ booksReading: newArr })
+    newArr = this.state.testbooks.filter((item) => {
+        return item.shelf === "wantToRead"
+    })
+    this.setState({ booksWanttoRead: newArr })
+
+    newArr = this.state.testbooks.filter((item) => {
+        return item.shelf === "read"
+    })
+    this.setState({ booksRead: newArr })
+  }
+  
+  updateBook (book, shelfParm) {
+      BooksAPI.update(book, shelfParm)  
+    .then((resp) => {
+        console.log("resp", resp)
+        this.getBooks()
+    })
+  }
+  getBooks () {
+    BooksAPI.getAll()
+      .then((testbooks) => {
+          this.setState(() => ({
+            testbooks
+          }))
+    })
+  }
+
   bookSearchChange = event => {
-    event.persist();
     let searchText = event.target.value;
     this.doSearch(searchText)
 
   };    
   doSearch (searchText) {
-    console.log(searchText)
-    BooksAPI.search(searchText)  
-    .then((tempbooks) => {
-        if (typeof tempbooks === 'object') {
-            if ("error" in tempbooks) {
-                this.setState({ tempbooks: [] })
+    if (searchText.trim()) {
+        BooksAPI.search(searchText)  
+        .then((books) => {
+            if (typeof books === 'object' && "error" in books) {
                 this.setState({ books: [] })
             } else {
-                 this.setState({ books: tempbooks })
+                this.setState(() => ({ books }))
             }
-        } else {
-            if (tempbooks) {
-                this.setState({ books: tempbooks })
-            } else {
-                 this.setState({ tempbooks: [] })
-                 this.setState({ books: [] })
-            }
-        }
-        this.setState({ bookSearchText: searchText });
-    })
+        })
+    } else {
+        this.setState({ books: [] })
+    }
+    this.setState({ bookSearchText: searchText });
   }
 
   setSelect = (book) => {
-    if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {
+    if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {       
         return "currentlyReading";
     }
     if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) > -1) {
@@ -104,21 +108,27 @@ class BooksApp extends React.Component {
     // Move the book to the taget bookshelf
     if (targetCat === 'currentlyReading') {
       if (this.state.booksReading.findIndex(item => item.id === book.id) === -1) {
+          this.updateBook (book, 'currentlyReading') 
           this.setState(prevState => ({
           booksReading: [...prevState.booksReading, book] }));
       }
     }
     if (targetCat === 'wantToRead') {
       if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) === -1) {
+        this.updateBook (book, 'wantToRead') 
           this.setState(prevState => ({
           booksWanttoRead: [...prevState.booksWanttoRead, book] }));
       }
     }
     if (targetCat === 'read') {
       if (this.state.booksRead.findIndex(item => item.id === book.id) === -1) {
+        this.updateBook (book, 'read') 
           this.setState(prevState => ({
           booksRead: [...prevState.booksRead, book] }));
       }
+    }
+    if (targetCat === 'none') {
+        this.updateBook (book, 'none') 
     }
     // If not the target category array then remove the book
     if (targetCat !== 'currentlyReading') {
@@ -155,7 +165,12 @@ class BooksApp extends React.Component {
                       <h1>MyReads</h1>
                   </div>
                   <div>
-                    <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook} setSelect={this.setSelect}/>
+                    {/* <ListBooks cat={this.state.cat[0]} books={this.state.booksReading} moveBook={this.moveBook} setSelect={this.setSelect}/> */}
+                    <ListBooks 
+                        cat={this.state.cat[0]} 
+                        books = {this.state.booksReading.filter((item) => {return item.shelf === this.state.cat[0]})}
+                        moveBook={this.moveBook} setSelect={this.setSelect}
+                    />
                     <ListBooks cat={this.state.cat[1]} books={this.state.booksWanttoRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
                     <ListBooks cat={this.state.cat[2]} books={this.state.booksRead} moveBook={this.moveBook} setSelect={this.setSelect}/>
                     <div className="open-search">
