@@ -5,16 +5,16 @@ import ListBooks from './ListBooks'
 import { Link } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 //----------------------------------------------------------------------
-// Changes to still make:
-// - Display multiple authors - COMPLETED
-// - Change arrow down button when mouse hover.
-// - if book image does not exist then show default image
-// - Save books using api
-// - search for books with input field
-// - add propType to components
+//TODO: If book image does not exist then show default image
+//      Add propType to components
+//      Add details modal for book
 //----------------------------------------------------------------------
 class BooksApp extends React.Component {
-    shelf = ["currentlyReading", "wantToRead", "read"];
+    shelf = {
+        currentlyReading: "currentlyReading", 
+        wantToRead: "wantToRead",
+        read: "read",
+        none: "none"}
     state = {
         booksReading: [],
         booksWanttoRead: [],
@@ -23,7 +23,6 @@ class BooksApp extends React.Component {
         bookSearchText: "",
     }
     componentDidMount() {
-        console.log("componentDidMount")
         BooksAPI.getAll()
             .then((savedBooks) => {
                 this.assignBookShelf(savedBooks)
@@ -32,17 +31,17 @@ class BooksApp extends React.Component {
 
     assignBookShelf(savedBooks) {
         let arr = savedBooks.filter((item) => {
-            return item.shelf === "currentlyReading"
+            return item.shelf === this.shelf.currentlyReading
         })
         this.setState({ booksReading: arr })
 
         arr = savedBooks.filter((item) => {
-            return item.shelf === "wantToRead"
+            return item.shelf === this.shelf.wantToRead
         })
         this.setState({ booksWanttoRead: arr })
 
         arr = savedBooks.filter((item) => {
-            return item.shelf === "read"
+            return item.shelf === this.shelf.read
         })
         this.setState({ booksRead: arr })
     }
@@ -76,20 +75,20 @@ class BooksApp extends React.Component {
 
     setSelect = (book) => {
         if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {
-            return "currentlyReading";
+            return this.shelf.currentlyReading;
         }
         if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) > -1) {
-            return "wantToRead";
+            return this.shelf.wantToRead;
         }
         if (this.state.booksRead.findIndex(item => item.id === book.id) > -1) {
-            return "read";
+            return this.shelf.read;
         }
-        return "none";
+        return this.shelf.none;
     }
 
     moveBook = (targetShelf, book) => {
         // Move the book to the taget bookshelf
-        if (targetShelf === 'currentlyReading') {
+        if (targetShelf === this.shelf.currentlyReading) {
             if (this.state.booksReading.findIndex(item => item.id === book.id) === -1) {
                 this.updateBook(book, targetShelf)
                 this.setState(prevState => ({
@@ -97,7 +96,7 @@ class BooksApp extends React.Component {
                 }));
             }
         }
-        if (targetShelf === 'wantToRead') {
+        if (targetShelf === this.shelf.wantToRead) {
             if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) === -1) {
                 this.updateBook(book, targetShelf)
                 this.setState(prevState => ({
@@ -105,7 +104,7 @@ class BooksApp extends React.Component {
                 }));
             }
         }
-        if (targetShelf === 'read') {
+        if (targetShelf === this.shelf.read) {
             if (this.state.booksRead.findIndex(item => item.id === book.id) === -1) {
                 this.updateBook(book, targetShelf)
                 this.setState(prevState => ({
@@ -113,11 +112,11 @@ class BooksApp extends React.Component {
                 }));
             }
         }
-        if (targetShelf === 'none') {
+        if (targetShelf === this.shelf.none) {
             this.updateBook(book, targetShelf)
         }
-        // If not the target category array then remove the book
-        if (targetShelf !== 'currentlyReading') {
+        // If not the target shelf array then remove the book
+        if (targetShelf !== this.shelf.currentlyReading) {
             if (this.state.booksReading.findIndex(item => item.id === book.id) > -1) {
                 let newArr = this.state.booksReading.filter((item) => {
                     return item.id !== book.id
@@ -125,7 +124,7 @@ class BooksApp extends React.Component {
                 this.setState({ booksReading: newArr });
             }
         }
-        if (targetShelf !== 'wantToRead') {
+        if (targetShelf !== this.shelf.wantToRead) {
             if (this.state.booksWanttoRead.findIndex(item => item.id === book.id) > -1) {
                 let newArr = this.state.booksWanttoRead.filter((item) => {
                     return item.id !== book.id
@@ -133,7 +132,7 @@ class BooksApp extends React.Component {
                 this.setState({ booksWanttoRead: newArr });
             }
         }
-        if (targetShelf !== 'read') {
+        if (targetShelf !== this.shelf.read) {
             if (this.state.booksRead.findIndex(item => item.id === book.id) > -1) {
                 let newArr = this.state.booksRead.filter((item) => {
                     return item.id !== book.id
@@ -151,17 +150,17 @@ class BooksApp extends React.Component {
                             <h1>MyReads</h1>
                         </div>
                         <div>
-                            <ListBooks shelf={this.shelf[0]}
+                            <ListBooks shelf={this.shelf.currentlyReading}
                                 books={this.state.booksReading}
                                 moveBook={this.moveBook}
                                 setSelect={this.setSelect}
                             />
-                            <ListBooks shelf={this.shelf[1]}
+                            <ListBooks shelf={this.shelf.wantToRead}
                                 books={this.state.booksWanttoRead}
                                 moveBook={this.moveBook}
                                 setSelect={this.setSelect}
                             />
-                            <ListBooks shelf={this.shelf[2]}
+                            <ListBooks shelf={this.shelf.read}
                                 books={this.state.booksRead}
                                 moveBook={this.moveBook}
                                 setSelect={this.setSelect}
