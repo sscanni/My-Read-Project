@@ -9,19 +9,15 @@ import './App.css';
       this.props.moveBook(targetCat, this.props.books[bookIndex])
     };
 
-    // setSelect = () => {
-    //   return this.props.cat
-    // }
-
     render() {
       return (
         <div className="list-books-content">
         <div>
           <div className="bookshelf">
             <h2 className="bookshelf-title">
-               {this.props.cat === 'currentlyReading' ? 'Currently Reading ' : 
-               (this.props.cat === 'wantToRead' ? 'Want to Read ' : 
-               (this.props.cat === 'read' ? 'Read ' : ''))} 
+               {this.props.shelf === 'currentlyReading' ? 'Currently Reading ' : 
+               (this.props.shelf === 'wantToRead' ? 'Want to Read ' : 
+               (this.props.shelf === 'read' ? 'Read ' : ''))} 
                ({this.props.books.length} books)
             </h2>
             <div className="bookshelf-books">
@@ -29,7 +25,11 @@ import './App.css';
               {this.props.books.map((book, index) => <li key={index}>
                   <div className="book">
                     <div className="book-top">
+                    {(("imageLinks" in book) 
+                    ?  
                      <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                     : 
+                     <div className="book-cover" style={{ width: 128, height: 192 }}></div>)}
                       <div className="book-shelf-changer">
                         <select name={index} value={this.props.setSelect(book)} onChange={this.selectChange.bind(this)}>
                           <option value="move" disabled>Move to...</option>
