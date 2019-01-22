@@ -189,7 +189,7 @@ button:active {
 .book-cover {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   background: #eee;
-  /* background-image: url('./icons/noImage.gif'); */
+  z-index: 0;
 }
 
 .book-cover-title {
@@ -197,3 +197,23 @@ button:active {
   text-align: center;
   font-size: 0.8em;
 }
+.book-cover-notfound {
+  text-align: center;
+  padding: 30px;
+}
+.book-top button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline:none;
+ }
+ .bookmodal {
+   margin-left: 10px;
+ }
+ textarea {
+  resize: none;
+  width: 95%;
+  margin: auto;
+  font-family: 'Roboto', sans-serif;
+}
+
