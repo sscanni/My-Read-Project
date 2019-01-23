@@ -6,6 +6,11 @@ This is my submission for the final assessment project for Udacity's React Funda
 
 **Note: Functionality was added to show a Modal pop-up displaying details of the book. Click on the book cover to see the modal pop-up with the details.**
 
+## Attribution Notice
+
+* I used code from this website https://daveceddia.com/open-modal-in-react/ for implementing the modal pop-ups.
+* I used the body-scroll-lock package that can be found here https://github.com/willmcpo/body-scroll-lock to lock the page so it will not scroll when modal is displayed. 
+
 ## Installation Requirements
 
 The following steps need to be followed:
