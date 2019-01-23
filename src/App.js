@@ -206,7 +206,6 @@ class BooksApp extends React.Component {
                 <Route path='/search' render={() => (
                     <div className="search-books">
                         <div className="search-books-bar">
-                        {/* <Link to='/' className="close-search">Close</Link> */}
                         {((this.state.modalOpen) 
                            ? <Link to='/search' className="close-search">Close</Link> 
                            : <Link to='/' className="close-search">Close</Link>)}
