@@ -9,7 +9,7 @@ This is my submission for the final assessment project for Udacity's React Funda
 ## Attribution Notice
 
 * I used code from this website https://daveceddia.com/open-modal-in-react/ for implementing the modal pop-ups.
-* I used the body-scroll-lock package that can be found here https://github.com/willmcpo/body-scroll-lock to lock the page so it will not scroll when modal is displayed. 
+* I used the body-scroll-lock package that can be found here https://github.com/willmcpo/body-scroll-lock to lock the page so it will not scroll when modal is displayed. See this page for more information: https://medium.com/jsdownunder/locking-body-scroll-for-all-devices-22def9615177
 
 ## Installation Requirements
 
